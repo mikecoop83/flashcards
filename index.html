@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#eff6ff">
+  <title>Times Table Club</title>
+  <script>
+    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)');
+    let savedTheme = null;
+    try { savedTheme = localStorage.getItem('times-table-theme'); } catch {}
+    if (savedTheme !== 'light' && savedTheme !== 'dark') savedTheme = null;
+    function applyTheme(theme) {
+      document.documentElement.dataset.theme = theme;
+      document.querySelector('meta[name="theme-color"]').content = theme === 'dark' ? '#0b162b' : '#eff6ff';
+      const toggle = document.getElementById('theme-toggle');
+      if (toggle) toggle.setAttribute('aria-checked', String(theme === 'dark'));
+    }
+    applyTheme(savedTheme || (systemTheme.matches ? 'dark' : 'light'));
+    systemTheme.addEventListener('change', (event) => {
+      if (!savedTheme) applyTheme(event.matches ? 'dark' : 'light');
+    });
+  </script>
+  <style>
+    :root { color-scheme: light; --bg: #eff6ff; --text: #19365b; --muted: #526b8a; --surface: #ffffff; --border: #c2d5ed; --soft: #dbeafe; --input: #ffffff; --accent: #1d4ed8; --hover: #1e40af; --on-accent: #ffffff; --focus: #3b82f6; --placeholder: #7185a1; --wrong: #a34414; --right: #167044; font-family: ui-rounded, 'Avenir Next', system-ui, sans-serif; color: var(--text); background: var(--bg); }
+    :root[data-theme="dark"] { color-scheme: dark; --bg: #0b162b; --text: #e0edff; --muted: #a6bddb; --surface: #14243d; --border: #3b5577; --soft: #203b61; --input: #0e1d33; --accent: #8bbcff; --hover: #b0d2ff; --on-accent: #102342; --focus: #93c5fd; --placeholder: #8a9fbb; --wrong: #ffba8a; --right: #7bdfad; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100svh; padding: clamp(20px, 5vw, 56px); }
+    main { max-width: 680px; margin: auto; }
+    header { display: flex; align-items: center; gap: 12px; margin-bottom: 36px; }
+    .mark { display: grid; place-items: center; flex-shrink: 0; width: 42px; height: 42px; background: var(--soft); border-radius: 14px; font-size: 30px; font-weight: 700; }
+    .brand { font-size: 18px; font-weight: 750; letter-spacing: -.5px; }
+    .eyebrow { font-size: 12px; font-weight: 750; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+    .scoreboard { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .score { font-size: 16px; }
+    .score strong { font-size: 24px; font-variant-numeric: tabular-nums; }
+    .badge { border: 1px solid var(--border); border-radius: 999px; padding: 8px 12px; font-size: 13px; white-space: nowrap; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 28px; padding: clamp(22px, 5vw, 42px); box-shadow: 0 12px 40px #1023420a; text-align: center; }
+    .question { font-size: clamp(54px, 12vw, 86px); font-weight: 750; letter-spacing: -3px; margin: 22px 0 28px; font-variant-numeric: tabular-nums; }
+    .question span { color: var(--muted); font-weight: 400; }
+    label { display: block; font-size: 14px; font-weight: 650; margin-bottom: 10px; }
+    input { width: 100%; min-height: 78px; border: 2px solid var(--border); border-radius: 16px; background: var(--input); color: var(--text); font: 650 36px ui-rounded, system-ui, sans-serif; text-align: center; }
+    input::placeholder { color: var(--placeholder); }
+    input:read-only { background: var(--soft); }
+    button { min-height: 54px; border: 0; border-radius: 14px; padding: 14px 20px; font: 650 16px inherit; font-family: inherit; font-size: 16px; font-weight: 650; cursor: pointer; touch-action: manipulation; }
+    input:focus-visible, button:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
+    .primary { background: var(--accent); color: var(--on-accent); width: 100%; margin-top: 16px; }
+    .primary:hover { background: var(--hover); }
+    .secondary { background: var(--soft); color: var(--text); width: 100%; margin-top: 10px; }
+    .feedback { min-height: 48px; display: grid; align-content: center; margin: 14px 0 0; font-size: 15px; line-height: 1.5; color: var(--muted); }
+    .feedback[data-tone="wrong"] { color: var(--wrong); }
+    .feedback[data-tone="right"] { color: var(--right); }
+    footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 18px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+    .reset { flex-shrink: 0; background: transparent; color: var(--muted); font-size: 13px; padding: 10px; }
+    .theme-toggle { margin-left: auto; flex-shrink: 0; display: flex; align-items: center; gap: 8px; padding: 10px 4px; background: transparent; color: var(--text); }
+    .switch-track { position: relative; display: block; width: 52px; height: 30px; border: 1px solid var(--border); border-radius: 999px; background: var(--soft); }
+    .switch-track::after { content: ''; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); transition: transform 160ms ease; }
+    .theme-toggle[aria-checked="true"] .switch-track::after { transform: translateX(22px); }
+    .theme-icon { font-size: 20px; line-height: 1; }
+    @media (prefers-reduced-motion: reduce) { .switch-track::after { transition: none; } }
+    [hidden] { display: none !important; }
+    @media (max-width: 380px) { body { padding: 16px; } header { margin-bottom: 26px; } .card { padding: 22px 18px; } .badge { font-size: 11px; } }
+  </style>
+</head>
+<body>
+  <main>
+    <header><div class="mark" aria-hidden="true">×</div><div class="brand">Times Table Club</div><button class="theme-toggle" id="theme-toggle" type="button" role="switch" aria-label="Dark mode" aria-checked="false"><span class="theme-icon" aria-hidden="true">☀</span><span class="switch-track" aria-hidden="true"></span><span class="theme-icon" aria-hidden="true">☾</span></button></header>
+    <div class="scoreboard">
+      <div class="score" role="status" aria-live="polite"><strong id="correct">0</strong> / <strong id="total">0</strong> correct <span id="percentage" hidden></span></div>
+      <div class="badge">Tables 0–12 · Mixed practice</div>
+    </div>
+    <section class="card" aria-label="Multiplication practice">
+      <div class="eyebrow" id="question-number">Question 1</div>
+      <div class="question" id="question" aria-live="polite"></div>
+      <form id="answer-form" novalidate>
+        <label for="answer">Your answer</label>
+        <input id="answer" name="answer" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" enterkeyhint="done" placeholder="?" aria-describedby="feedback">
+        <button class="primary" id="check" type="submit">Check answer</button>
+        <button class="secondary" id="reveal" type="button" hidden>Show the answer</button>
+        <button class="primary" id="next" type="button" hidden>Next question →</button>
+      </form>
+      <p class="feedback" id="feedback" role="status" aria-live="polite">One question at a time. No timer, no rush.</p>
+    </section>
+    <footer><span>Score counts answers right on the first try.<br>Retries are always welcome.</span><button class="reset" id="reset" type="button">Start fresh ↻</button></footer>
+  </main>
+  <script>
+    'use strict';
+    const $ = (id) => document.getElementById(id);
+    applyTheme(document.documentElement.dataset.theme);
+    $('theme-toggle').addEventListener('click', () => {
+      savedTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+      applyTheme(savedTheme);
+      try { localStorage.setItem('times-table-theme', savedTheme); } catch {}
+    });
+    let deck = [];
+    let pair;
+    let correct = 0;
+    let total = 0;
+    let questionNumber = 0;
+    let attempted = false;
+    let finished = false;
+
+    function refillDeck() {
+      deck = Array.from({ length: 169 }, (_, n) => [Math.floor(n / 13), n % 13]);
+      for (let i = deck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [deck[i], deck[j]] = [deck[j], deck[i]];
+      }
+      // Avoid the same question on either side of a deck boundary.
+      if (pair && deck.at(-1).join() === pair.join()) {
+        [deck[0], deck[168]] = [deck[168], deck[0]];
+      }
+    }
+
+    function feedback(message, tone = '') {
+      $('feedback').textContent = message;
+      $('feedback').dataset.tone = tone;
+    }
+
+    function updateScore() {
+      $('correct').textContent = correct;
+      $('total').textContent = total;
+      $('percentage').hidden = total === 0;
+      $('percentage').textContent = total > 0 ? '(' + Math.round(correct / total * 100) + '%)' : '';
+    }
+
+    function newQuestion(focus = true) {
+      if (!deck.length) refillDeck();
+      pair = deck.pop();
+      attempted = false;
+      finished = false;
+      questionNumber++;
+      $('question-number').textContent = 'Question ' + questionNumber;
+      $('question').textContent = pair[0] + ' × ' + pair[1] + ' = ?';
+      $('answer').value = '';
+      $('answer').readOnly = false;
+      $('answer').removeAttribute('aria-invalid');
+      $('check').hidden = false;
+      $('check').textContent = 'Check answer';
+      $('reveal').hidden = true;
+      $('next').hidden = true;
+      feedback('One question at a time. No timer, no rush.');
+      if (focus) $('answer').focus();
+    }
+
+    function finish() {
+      finished = true;
+      $('answer').readOnly = true;
+      $('answer').removeAttribute('aria-invalid');
+      $('check').hidden = true;
+      $('reveal').hidden = true;
+      $('next').hidden = false;
+      $('next').focus();
+    }
+
+    $('answer').addEventListener('input', (event) => {
+      const input = event.target;
+      const digits = input.value.replace(/[^0-9]/g, '');
+      if (input.value !== digits) {
+        const cursor = input.value.slice(0, input.selectionStart).replace(/[^0-9]/g, '').length;
+        input.value = digits;
+        input.setSelectionRange(cursor, cursor);
+      }
+    });
+
+    $('answer-form').addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (finished) return;
+      const value = $('answer').value.trim();
+      if (!/^\d+$/.test(value)) {
+        feedback('Enter a whole number, like 0, 12, or 144.');
+        $('answer').setAttribute('aria-invalid', 'true');
+        $('answer').focus();
+        return;
+      }
+      const isCorrect = Number(value) === pair[0] * pair[1];
+      const firstTry = !attempted;
+      if (firstTry) {
+        total++;
+        if (isCorrect) correct++;
+        attempted = true;
+        updateScore();
+      }
+      if (isCorrect) {
+        feedback(firstTry ? 'That’s right! Nicely done.' : 'You got it! Practice pays off.', 'right');
+        finish();
+      } else {
+        feedback('Not quite. Try again, or take a look at the answer.', 'wrong');
+        $('answer').setAttribute('aria-invalid', 'true');
+        $('check').textContent = 'Try again';
+        $('reveal').hidden = false;
+        $('answer').focus();
+        $('answer').select();
+      }
+    });
+
+    $('reveal').addEventListener('click', () => {
+      if (finished || !attempted) return;
+      $('answer').value = pair[0] * pair[1];
+      feedback(pair[0] + ' × ' + pair[1] + ' = ' + pair[0] * pair[1] + '. You’ll get it with practice.');
+      finish();
+    });
+    $('next').addEventListener('click', () => { if (finished) newQuestion(); });
+    $('reset').addEventListener('click', () => {
+      correct = 0;
+      total = 0;
+      questionNumber = 0;
+      deck = [];
+      updateScore();
+      newQuestion();
+    });
+    newQuestion(false);
+  </script>
+</body>
+</html>
