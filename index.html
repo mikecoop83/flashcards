@@ -188,7 +188,7 @@
           return;
         }
         $('answer').value = value;
-        $('answer').setSelectionRange(0, value.length);
+        $('answer').setSelectionRange(value.length, value.length);
         $('answer').removeAttribute('aria-invalid');
         feedback('Heard ' + value + '. Check your answer when you’re ready.');
         $('answer').focus({ preventScroll: true });
