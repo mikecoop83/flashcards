@@ -1,4 +1,4 @@
-# Times Table Club
+# Times Tables
 
 A standalone, responsive webpage for practicing multiplication with numbers from 0 through 12. Works on phones, tablets, and desktops, including offline.
 
