@@ -15,6 +15,12 @@ Download or clone this repository and open `index.html` in a browser. No install
 - Blue light and dark themes with a horizontal switch. Initially follows your device’s theme and remembers your selection when browser storage is available.
 - A **Start fresh** button to reset your score and shuffle the questions.
 
+## Voice input
+
+Tap **Speak answer**, allow microphone access, and say a number in English (for example, “fifty-six”). The recognized number fills the answer field; review it and tap **Check answer** yourself. Tap **Stop listening** to cancel.
+
+Voice input uses the browser’s speech recognition service and may send audio to that service. Browser support varies and an internet connection may be required. Use an HTTPS-hosted copy for mobile testing. The number pad remains available if voice input is unsupported or microphone access is denied.
+
 ## Scoring
 
 Each question counts once, on the first valid answer. Only answers correct on the first try increase the correct count. Retrying or revealing an answer does not change that question’s score. Empty or invalid answers do not count.

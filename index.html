@@ -45,6 +45,11 @@
     input { width: 100%; min-height: 78px; border: 2px solid var(--border); border-radius: 16px; background: var(--input); color: var(--text); font: 650 36px ui-rounded, system-ui, sans-serif; text-align: center; }
     input::placeholder { color: var(--placeholder); }
     input[data-finished="true"] { background: var(--soft); }
+    .answer-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 10px; }
+    .answer-row label { grid-column: 1; grid-row: 1; }
+    .answer-row input { grid-column: 1; grid-row: 2; min-width: 0; }
+    .speak-button { grid-column: 2; grid-row: 2; align-self: stretch; width: 48px; min-height: 48px; padding: 8px; background: var(--soft); color: var(--text); font-size: 22px; }
+    .speak-button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
     .number-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
     .number-pad button { background: var(--soft); color: var(--text); min-height: 46px; padding: 8px; font-size: 22px; }
     .number-pad button:active { background: var(--accent); color: var(--on-accent); }
@@ -81,8 +86,11 @@
       <div class="eyebrow" id="question-number">Question 1</div>
       <div class="question" id="question" aria-live="polite"></div>
       <form id="answer-form" novalidate>
-        <label for="answer">Your answer</label>
-        <input id="answer" name="answer" type="text" inputmode="none" readonly pattern="[0-9]*" autocomplete="off" placeholder="?" aria-describedby="feedback">
+        <div class="answer-row">
+          <label for="answer">Your answer</label>
+          <input id="answer" name="answer" type="text" inputmode="none" readonly pattern="[0-9]*" autocomplete="off" placeholder="?" aria-describedby="feedback">
+          <button class="speak-button" id="speak" type="button" aria-label="Speak answer" title="Speak answer" aria-pressed="false"><span aria-hidden="true">🎤</span></button>
+        </div>
         <div class="number-pad" id="number-pad" role="group" aria-label="Number pad">
           <button type="button" data-key="1">1</button>
           <button type="button" data-key="2">2</button>
@@ -121,6 +129,99 @@
     let questionNumber = 0;
     let attempted = false;
     let finished = false;
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
+
+    const smallNumbers = 'zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen'.split(' ');
+    const tens = 'zero ten twenty thirty forty fifty sixty seventy eighty ninety'.split(' ');
+    function numberWords(n) {
+      if (n < 20) return smallNumbers[n];
+      if (n < 100) return tens[Math.floor(n / 10)] + (n % 10 ? ' ' + smallNumbers[n % 10] : '');
+      return smallNumbers[Math.floor(n / 100)] + ' hundred' + (n % 100 ? ' ' + numberWords(n % 100) : '');
+    }
+    const spokenNumbers = new Map(Array.from({ length: 1000 }, (_, n) => [numberWords(n), String(n)]));
+    function parseSpokenNumber(transcript) {
+      const normalized = transcript.toLowerCase().trim().replace(/[.!?]+$/, '').replace(/-/g, ' ').replace(/\band\b/g, ' ').replace(/\s+/g, ' ').trim();
+      if (/^\d{1,3}$/.test(normalized)) return String(Number(normalized));
+      return spokenNumbers.get(normalized) ?? null;
+    }
+
+    function stopListening() {
+      const previous = recognition;
+      recognition = null;
+      $('speak').firstElementChild.textContent = '🎤';
+      $('speak').setAttribute('aria-label', 'Speak answer');
+      $('speak').title = 'Speak answer';
+      $('speak').setAttribute('aria-pressed', 'false');
+      if (previous) previous.abort();
+    }
+
+    $('speak').addEventListener('click', () => {
+      if (finished) return;
+      if (recognition) {
+        stopListening();
+        feedback('Listening canceled. You can use the number pad.');
+        return;
+      }
+      if (!SpeechRecognition) {
+        feedback('Voice input isn’t supported in this browser. Use the number pad instead.');
+        return;
+      }
+      const session = new SpeechRecognition();
+      recognition = session;
+      session.lang = 'en-US';
+      session.continuous = false;
+      session.interimResults = false;
+      session.maxAlternatives = 1;
+      $('speak').firstElementChild.textContent = '■';
+      $('speak').setAttribute('aria-label', 'Stop listening');
+      $('speak').title = 'Stop listening';
+      $('speak').setAttribute('aria-pressed', 'true');
+      feedback('Listening… say your answer in English.');
+      session.onresult = (event) => {
+        if (recognition !== session || finished) return;
+        const transcript = event.results[0][0].transcript;
+        const value = parseSpokenNumber(transcript);
+        stopListening();
+        if (value === null) {
+          feedback('Heard “' + transcript + '”. Please say a whole number, or use the number pad.');
+          return;
+        }
+        $('answer').value = value;
+        $('answer').setSelectionRange(0, value.length);
+        $('answer').removeAttribute('aria-invalid');
+        feedback('Heard ' + value + '. Check your answer when you’re ready.');
+        $('answer').focus({ preventScroll: true });
+      };
+      session.onerror = (event) => {
+        if (recognition !== session) return;
+        stopListening();
+        const messages = {
+          'not-allowed': 'Microphone access wasn’t allowed. Allow it in your browser settings, or use the number pad.',
+          'service-not-allowed': 'Voice input isn’t available here. Try a supported browser, or use the number pad.',
+          'audio-capture': 'No microphone is available. You can use the number pad.',
+          'network': 'Voice input couldn’t connect. Check your connection or use the number pad.',
+          'no-speech': 'No speech was heard. Try again or use the number pad.'
+        };
+        feedback(messages[event.error] || 'Voice input didn’t work. Try again or use the number pad.');
+      };
+      session.onend = () => {
+        if (recognition !== session) return;
+        stopListening();
+        feedback('No answer was recognized. Try again or use the number pad.');
+      };
+      try { session.start(); }
+      catch {
+        stopListening();
+        feedback('Couldn’t start voice input. Try opening the site over HTTPS, or use the number pad.');
+      }
+    });
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden && recognition) {
+        stopListening();
+        feedback('Listening paused. Tap Speak answer to try again.');
+      }
+    });
 
     function refillDeck() {
       deck = Array.from({ length: 169 }, (_, n) => [Math.floor(n / 13), n % 13]);
@@ -147,6 +248,8 @@
     }
 
     function newQuestion(focus = true) {
+      stopListening();
+      $('speak').hidden = false;
       if (!deck.length) refillDeck();
       pair = deck.pop();
       attempted = false;
@@ -167,6 +270,8 @@
     }
 
     function finish() {
+      stopListening();
+      $('speak').hidden = true;
       finished = true;
       $('question').textContent = pair[0] + ' × ' + pair[1] + ' = ' + pair[0] * pair[1];
       $('answer').dataset.finished = 'true';
@@ -180,6 +285,10 @@
 
     function editAnswer(key) {
       if (finished) return;
+      if (recognition) {
+        stopListening();
+        feedback('Use the number pad, then check your answer.');
+      }
       const input = $('answer');
       let start = input.selectionStart;
       let end = input.selectionEnd;
@@ -221,6 +330,7 @@
     $('answer-form').addEventListener('submit', (event) => {
       event.preventDefault();
       if (finished) return;
+      stopListening();
       const value = $('answer').value.trim();
       if (!/^\d+$/.test(value)) {
         feedback('Enter a whole number, like 0, 12, or 144.');
