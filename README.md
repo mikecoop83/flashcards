@@ -9,7 +9,7 @@ Download or clone this repository and open `index.html` in a browser. No install
 ## Features
 
 - Randomized questions covering all 169 factor pairs from 0–12 before repeating.
-- Digits-only answer input with a numeric keyboard on mobile devices.
+- Compact on-screen number pad with clear and backspace, without opening the mobile keyboard. Physical keyboard input and digit-only paste are also supported when the answer field is focused.
 - Correct answers out of total questions, plus a percentage once you’ve answered a question.
 - Unlimited retries or the option to reveal the answer after a mistake.
 - Blue light and dark themes with a horizontal switch. Initially follows your device’s theme and remembers your selection when browser storage is available.
