@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#eff6ff">
   <title>Times Tables</title>
+  <link rel="icon" href="favicon.ico" sizes="16x16 32x32 48x48">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180">
+  <meta name="apple-mobile-web-app-title" content="Times Tables">
   <script>
     const systemTheme = window.matchMedia('(prefers-color-scheme: dark)');
     let savedTheme = null;
@@ -28,7 +31,7 @@
     body { margin: 0; min-height: 100svh; padding: clamp(20px, 5vw, 56px); }
     main { max-width: 680px; margin: auto; }
     header { display: flex; align-items: center; gap: 12px; margin-bottom: 36px; }
-    .mark { display: grid; place-items: center; flex-shrink: 0; width: 42px; height: 42px; background: var(--soft); border-radius: 14px; font-size: 30px; font-weight: 700; }
+    .mark { display: grid; place-items: center; flex-shrink: 0; width: 42px; height: 42px; background: #2563eb; color: #ffffff; border-radius: 12px; font-size: 32px; font-weight: 750; line-height: 1; }
     .brand { font-size: 18px; font-weight: 750; letter-spacing: -.5px; }
     .eyebrow { font-size: 12px; font-weight: 750; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
     .scoreboard { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; }
