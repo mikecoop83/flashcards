@@ -168,6 +168,7 @@
 
     function finish() {
       finished = true;
+      $('question').textContent = pair[0] + ' × ' + pair[1] + ' = ' + pair[0] * pair[1];
       $('answer').dataset.finished = 'true';
       $('number-pad').hidden = true;
       $('answer').removeAttribute('aria-invalid');
