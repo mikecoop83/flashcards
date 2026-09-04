@@ -35,7 +35,7 @@
     .brand { display: flex; align-items: center; gap: 12px; font-size: 18px; font-weight: 750; letter-spacing: -.5px; white-space: nowrap; }
     .eyebrow { font-size: 12px; font-weight: 750; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
     .scoreboard { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; }
-    .score { font-size: 16px; }
+    .score { font-size: 16px; user-select: none; touch-action: manipulation; }
     .score strong { font-size: 24px; font-variant-numeric: tabular-nums; }
     .card { background: var(--surface); border: 1px solid var(--border); border-radius: 28px; padding: clamp(22px, 5vw, 42px); box-shadow: 0 12px 40px #1023420a; text-align: center; }
     .question { font-size: clamp(54px, 12vw, 86px); font-weight: 750; letter-spacing: -3px; margin: 22px 0 28px; font-variant-numeric: tabular-nums; }
@@ -81,7 +81,7 @@
       <button class="theme-toggle" id="theme-toggle" type="button" role="switch" aria-label="Dark mode" aria-checked="false"><span class="theme-icon" aria-hidden="true">☀</span><span class="switch-track" aria-hidden="true"></span><span class="theme-icon" aria-hidden="true">☾</span></button>
     </header>
     <div class="scoreboard">
-      <div class="score" role="status" aria-live="polite"><strong id="correct">0</strong> / <strong id="total">0</strong> correct <span id="percentage" hidden></span></div>
+      <div class="score" id="score" role="status" aria-live="polite"><strong id="correct">0</strong> / <strong id="total">0</strong> correct <span id="percentage" hidden></span></div>
       <button class="reset" id="reset" type="button">Reset score ↻</button>
     </div>
     <section class="card" aria-label="Multiplication practice">
@@ -260,6 +260,39 @@
     function saveScore() {
       try { localStorage.setItem(scoreStorageKey, JSON.stringify({ correct, total })); } catch {}
     }
+
+    function editScore() {
+      if (recognition) {
+        stopListening();
+        feedback('Listening canceled. You can use the number pad.');
+      }
+      const value = window.prompt('Edit score (correct / total):', correct + ' / ' + total);
+      if (value === null) return;
+      const match = value.trim().match(/^(\d+)\s*\/\s*(\d+)$/);
+      const newCorrect = match ? Number(match[1]) : NaN;
+      const newTotal = match ? Number(match[2]) : NaN;
+      if (!Number.isSafeInteger(newCorrect) || !Number.isSafeInteger(newTotal) || newCorrect > newTotal) {
+        window.alert('Enter whole numbers as correct / total, like 12 / 20. Correct answers cannot exceed the total.');
+        return;
+      }
+      correct = newCorrect;
+      total = newTotal;
+      updateScore();
+      saveScore();
+    }
+
+    let scoreTapCount = 0;
+    let scoreTapStartedAt = 0;
+    $('score').addEventListener('click', (event) => {
+      if (scoreTapCount === 0 || event.timeStamp - scoreTapStartedAt > 2000) {
+        scoreTapCount = 0;
+        scoreTapStartedAt = event.timeStamp;
+      }
+      scoreTapCount++;
+      if (scoreTapCount < 5) return;
+      scoreTapCount = 0;
+      editScore();
+    });
 
     function newQuestion(focus = true) {
       stopListening();

@@ -28,6 +28,8 @@ Each question counts once, on the first valid answer. Only answers correct on th
 
 Your score is saved in this browser and restored when you reload or return. Choose **Reset score** to reset the saved score and shuffle the questions. Each visit starts with a new question. If browser storage is unavailable, you can still practice, but your score will only last until you reload.
 
+To adjust a score manually, tap or click the score five times within two seconds. Enter the new score as **correct / total**, for example `12 / 20`. Both counts must be nonnegative whole numbers, and correct answers cannot exceed the total. Canceling or entering an invalid score leaves it unchanged. A valid edit is saved without changing the current question or its retry state.
+
 ## Editing
 
 All HTML, CSS, and JavaScript live in `index.html`. Edit the file and refresh your browser to see changes. There are no external dependencies.
