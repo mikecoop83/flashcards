@@ -28,16 +28,15 @@
     :root { color-scheme: light; --bg: #eff6ff; --text: #19365b; --muted: #526b8a; --surface: #ffffff; --border: #c2d5ed; --soft: #dbeafe; --input: #ffffff; --accent: #1d4ed8; --hover: #1e40af; --on-accent: #ffffff; --focus: #3b82f6; --placeholder: #7185a1; --wrong: #a34414; --right: #167044; font-family: ui-rounded, 'Avenir Next', system-ui, sans-serif; color: var(--text); background: var(--bg); }
     :root[data-theme="dark"] { color-scheme: dark; --bg: #0b162b; --text: #e0edff; --muted: #a6bddb; --surface: #14243d; --border: #3b5577; --soft: #203b61; --input: #0e1d33; --accent: #8bbcff; --hover: #b0d2ff; --on-accent: #102342; --focus: #93c5fd; --placeholder: #8a9fbb; --wrong: #ffba8a; --right: #7bdfad; }
     * { box-sizing: border-box; }
-    body { margin: 0; min-height: 100svh; padding: clamp(20px, 5vw, 56px); }
+    body { margin: 0; min-height: 100svh; padding: clamp(20px, 5vw, 56px); padding-top: 16px; }
     main { max-width: 680px; margin: auto; }
-    header { display: flex; align-items: center; gap: 12px; margin-bottom: 36px; }
+    header { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 12px; }
     .mark { display: grid; place-items: center; flex-shrink: 0; width: 42px; height: 42px; background: #2563eb; color: #ffffff; border-radius: 12px; font-size: 32px; font-weight: 750; line-height: 1; }
-    .brand { font-size: 18px; font-weight: 750; letter-spacing: -.5px; }
+    .brand { display: flex; align-items: center; gap: 12px; font-size: 18px; font-weight: 750; letter-spacing: -.5px; white-space: nowrap; }
     .eyebrow { font-size: 12px; font-weight: 750; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
     .scoreboard { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; }
     .score { font-size: 16px; }
     .score strong { font-size: 24px; font-variant-numeric: tabular-nums; }
-    .badge { border: 1px solid var(--border); border-radius: 999px; padding: 8px 12px; font-size: 13px; white-space: nowrap; }
     .card { background: var(--surface); border: 1px solid var(--border); border-radius: 28px; padding: clamp(22px, 5vw, 42px); box-shadow: 0 12px 40px #1023420a; text-align: center; }
     .question { font-size: clamp(54px, 12vw, 86px); font-weight: 750; letter-spacing: -3px; margin: 22px 0 28px; font-variant-numeric: tabular-nums; }
     .question span { color: var(--muted); font-weight: 400; }
@@ -52,9 +51,10 @@
     .speak-button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
     .number-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
     .number-pad button { background: var(--soft); color: var(--text); min-height: 46px; padding: 8px; font-size: 22px; }
-    .number-pad button:active { background: var(--accent); color: var(--on-accent); }
+    .number-pad button:enabled:active { background: var(--accent); color: var(--on-accent); }
     .number-pad .edit-key { font-size: 15px; }
     button { min-height: 54px; border: 0; border-radius: 14px; padding: 14px 20px; font: 650 16px inherit; font-family: inherit; font-size: 16px; font-weight: 650; cursor: pointer; touch-action: manipulation; }
+    button:disabled { opacity: .5; cursor: default; }
     input:focus-visible, button:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
     .primary { background: var(--accent); color: var(--on-accent); width: 100%; margin-top: 16px; }
     .primary:hover { background: var(--hover); }
@@ -62,25 +62,27 @@
     .feedback { min-height: 48px; display: grid; align-content: center; margin: 14px 0 0; font-size: 15px; line-height: 1.5; color: var(--muted); }
     .feedback[data-tone="wrong"] { color: var(--wrong); }
     .feedback[data-tone="right"] { color: var(--right); }
-    footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 18px; color: var(--muted); font-size: 12px; line-height: 1.5; }
-    .reset { flex-shrink: 0; background: transparent; color: var(--muted); font-size: 13px; padding: 10px; }
-    .theme-toggle { margin-left: auto; flex-shrink: 0; display: flex; align-items: center; gap: 8px; padding: 10px 4px; background: transparent; color: var(--text); }
+    .reset { margin-left: auto; flex-shrink: 0; background: transparent; color: var(--muted); font-size: 13px; padding: 10px; white-space: nowrap; }
+    .theme-toggle { justify-self: end; display: flex; align-items: center; gap: 8px; padding: 10px 4px; background: transparent; color: var(--text); }
     .switch-track { position: relative; display: block; width: 52px; height: 30px; border: 1px solid var(--border); border-radius: 999px; background: var(--soft); }
     .switch-track::after { content: ''; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); transition: transform 160ms ease; }
     .theme-toggle[aria-checked="true"] .switch-track::after { transform: translateX(22px); }
     .theme-icon { font-size: 20px; line-height: 1; }
     @media (prefers-reduced-motion: reduce) { .switch-track::after { transition: none; } }
     [hidden] { display: none !important; }
-    @media (max-width: 600px), (max-height: 800px) { body { padding: 16px; } header { margin-bottom: 12px; } .card { padding: 18px; } .question { font-size: 52px; margin: 10px 0 14px; } input { min-height: 56px; font-size: 30px; } .feedback { margin-top: 8px; min-height: 42px; } footer { margin-top: 8px; } }
-    @media (max-width: 380px) { body { padding: 16px; } header { margin-bottom: 26px; } .card { padding: 22px 18px; } .badge { font-size: 11px; } }
+    @media (max-width: 600px), (max-height: 800px) { body { padding: 8px 16px 16px; } .card { padding: 18px; } .question { font-size: 52px; margin: 10px 0 14px; } input { min-height: 56px; font-size: 30px; } .feedback { margin-top: 8px; min-height: 42px; } }
+    @media (max-width: 380px) { .card { padding: 22px 18px; } }
   </style>
 </head>
 <body>
   <main>
-    <header><div class="mark" aria-hidden="true">×</div><div class="brand">Times Tables</div><button class="theme-toggle" id="theme-toggle" type="button" role="switch" aria-label="Dark mode" aria-checked="false"><span class="theme-icon" aria-hidden="true">☀</span><span class="switch-track" aria-hidden="true"></span><span class="theme-icon" aria-hidden="true">☾</span></button></header>
+    <header>
+      <div class="brand"><div class="mark" aria-hidden="true">×</div>Times Tables</div>
+      <button class="theme-toggle" id="theme-toggle" type="button" role="switch" aria-label="Dark mode" aria-checked="false"><span class="theme-icon" aria-hidden="true">☀</span><span class="switch-track" aria-hidden="true"></span><span class="theme-icon" aria-hidden="true">☾</span></button>
+    </header>
     <div class="scoreboard">
       <div class="score" role="status" aria-live="polite"><strong id="correct">0</strong> / <strong id="total">0</strong> correct <span id="percentage" hidden></span></div>
-      <div class="badge">Tables 0–12 · Mixed practice</div>
+      <button class="reset" id="reset" type="button">Reset score ↻</button>
     </div>
     <section class="card" aria-label="Multiplication practice">
       <div class="eyebrow" id="question-number">Question 1</div>
@@ -111,7 +113,6 @@
       </form>
       <p class="feedback" id="feedback" role="status" aria-live="polite">One question at a time. No timer, no rush.</p>
     </section>
-    <footer><span>Score counts answers right on the first try.<br>Retries are always welcome.</span><button class="reset" id="reset" type="button">Start fresh ↻</button></footer>
   </main>
   <script>
     'use strict';
@@ -122,10 +123,19 @@
       applyTheme(savedTheme);
       try { localStorage.setItem('times-table-theme', savedTheme); } catch {}
     });
+    const scoreStorageKey = 'times-table-score';
     let deck = [];
     let pair;
     let correct = 0;
     let total = 0;
+    try {
+      const savedScore = JSON.parse(localStorage.getItem(scoreStorageKey));
+      if (savedScore && Number.isSafeInteger(savedScore.correct) && Number.isSafeInteger(savedScore.total)
+          && savedScore.correct >= 0 && savedScore.total >= savedScore.correct) {
+        correct = savedScore.correct;
+        total = savedScore.total;
+      }
+    } catch {}
     let questionNumber = 0;
     let attempted = false;
     let finished = false;
@@ -247,9 +257,13 @@
       $('percentage').textContent = total > 0 ? '(' + Math.round(correct / total * 100) + '%)' : '';
     }
 
+    function saveScore() {
+      try { localStorage.setItem(scoreStorageKey, JSON.stringify({ correct, total })); } catch {}
+    }
+
     function newQuestion(focus = true) {
       stopListening();
-      $('speak').hidden = false;
+      $('speak').disabled = false;
       if (!deck.length) refillDeck();
       pair = deck.pop();
       attempted = false;
@@ -259,7 +273,7 @@
       $('question').textContent = pair[0] + ' × ' + pair[1] + ' = ?';
       $('answer').value = '';
       $('answer').dataset.finished = 'false';
-      $('number-pad').hidden = false;
+      for (const button of $('number-pad').querySelectorAll('button')) button.disabled = false;
       $('answer').removeAttribute('aria-invalid');
       $('check').hidden = false;
       $('check').textContent = 'Check answer';
@@ -271,11 +285,11 @@
 
     function finish() {
       stopListening();
-      $('speak').hidden = true;
+      $('speak').disabled = true;
       finished = true;
       $('question').textContent = pair[0] + ' × ' + pair[1] + ' = ' + pair[0] * pair[1];
       $('answer').dataset.finished = 'true';
-      $('number-pad').hidden = true;
+      for (const button of $('number-pad').querySelectorAll('button')) button.disabled = true;
       $('answer').removeAttribute('aria-invalid');
       $('check').hidden = true;
       $('reveal').hidden = true;
@@ -345,6 +359,7 @@
         if (isCorrect) correct++;
         attempted = true;
         updateScore();
+        saveScore();
       }
       if (isCorrect) {
         feedback(firstTry ? 'That’s right! Nicely done.' : 'You got it! Practice pays off.', 'right');
@@ -367,13 +382,16 @@
     });
     $('next').addEventListener('click', () => { if (finished) newQuestion(); });
     $('reset').addEventListener('click', () => {
+      if (!window.confirm('Are you sure you want to reset your score?')) return;
       correct = 0;
       total = 0;
       questionNumber = 0;
       deck = [];
       updateScore();
+      saveScore();
       newQuestion();
     });
+    updateScore();
     newQuestion(false);
   </script>
 </body>

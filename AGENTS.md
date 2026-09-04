@@ -13,7 +13,7 @@
 - `editAnswer()` handles keypad, physical-keyboard, and paste edits. The form's submit handler validates answers and updates scoring; `updateScore()` renders the totals and percentage.
 - `parseSpokenNumber()` converts recognized English numbers to digits. Speech callbacks check the active recognition session to ignore stale events; `stopListening()` cancels it.
 - `applyTheme()` updates the theme and switch state. Its initialization runs in the document head to avoid flashing the wrong theme.
-- Questions, answers, and scores live only in memory and reset on reload. Only the theme preference persists, using the `times-table-theme` key in `localStorage`.
+- Questions and answers live only in memory and reset on reload. Scores persist using the `times-table-score` key in `localStorage` until **Reset score** resets them; the theme preference persists using `times-table-theme`. Unavailable storage does not interrupt practice.
 - Use this map to locate relevant code before editing; it does not replace reading that code.
 
 ## Current behavior and design
@@ -25,11 +25,13 @@ These describe how the app works today, not permanent requirements. Preserve the
 - The percentage appears only when the total is greater than zero.
 - The equation keeps its question mark after an incorrect attempt and shows the answer after a correct attempt or reveal.
 - The mobile keyboard stays closed. An on-screen number pad provides digits, clear, and backspace; physical keyboard and digits-only paste are also supported.
+- The number pad and microphone remain visible but disabled after a correct answer or reveal, and are enabled again for a new question.
 - Voice input fills the answer without submitting it or selecting the recognized number. The cursor stays at the end.
 - Voice capture is canceled on manual edits or question changes, and stale recognition events are ignored. The number pad remains usable when voice input fails.
 - The theme initially follows the device and remembers an explicit light/dark choice when storage is available. Unavailable storage does not interrupt practice.
 - The name is “Times Tables,” with a blue theme and a white multiplication sign on a blue square.
 - The layout is compact and responsive for phones and iPads, with accessible labels, visible keyboard focus, and comfortable touch targets.
+- **Reset score** sits to the right of the score and asks for confirmation before resetting. Canceling leaves the score and current question unchanged. There is no practice badge or footer.
 - The microphone button sits to the right of the answer input at the same height. “Your answer” is centered over the input alone.
 - The light/dark control is a horizontal switch, with reduced-motion support.
 
