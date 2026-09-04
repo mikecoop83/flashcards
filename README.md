@@ -17,7 +17,7 @@ Download or clone this repository and open `index.html` in a browser. No install
 - Correct answers out of total questions, plus a percentage once you’ve answered a question.
 - Unlimited retries or the option to reveal the answer after a mistake.
 - Blue light and dark themes with a horizontal switch. Initially follows your device’s theme and remembers your selection when browser storage is available.
-- A **Reset score** button to the right of the score, with a confirmation prompt before clearing your score and shuffling the questions.
+- A compact header with the score and icon-only **Reset score** control on the left, the title centered, and the theme switch on the right. Resetting asks for confirmation before clearing your score and shuffling the questions.
 
 ## Voice input
 
@@ -30,8 +30,6 @@ Voice input uses the browser’s speech recognition service and may send audio t
 Each question counts once, on the first valid answer. Only answers correct on the first try increase the correct count. Retrying or revealing an answer does not change that question’s score. Empty or invalid answers do not count.
 
 Your score is saved in this browser and restored when you reload or return. Choose **Reset score** to reset the saved score and shuffle the questions. Each visit starts with a new question. If browser storage is unavailable, you can still practice, but your score will only last until you reload.
-
-To adjust a score manually, tap or click the score five times within two seconds. Enter the new score as **correct / total**, for example `12 / 20`. Both counts must be nonnegative whole numbers, and correct answers cannot exceed the total. Canceling or entering an invalid score leaves it unchanged. A valid edit is saved without changing the current question or its retry state.
 
 ## Editing
 

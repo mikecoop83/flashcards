@@ -12,7 +12,6 @@
 - `newQuestion()` selects and displays a question; `finish()` completes the equation and shows the next-question control.
 - `celebrateCorrectAnswer()` shows a success banner, green card/equation/answer highlights, and brief CSS confetti after a correct submission. `newQuestion()` clears the celebration.
 - `editAnswer()` handles keypad, physical-keyboard, and paste edits. The form's submit handler validates answers and updates scoring; `updateScore()` renders the totals and percentage.
-- `editScore()` validates and saves a manual score without changing the current question or retry state. Five taps or clicks on the score within two seconds open its prompt.
 - `parseSpokenNumber()` converts recognized English numbers to digits. Speech callbacks check the active recognition session to ignore stale events; `stopListening()` cancels it.
 - `applyTheme()` updates the theme and switch state. Its initialization runs in the document head to avoid flashing the wrong theme.
 - Questions and answers live only in memory and reset on reload. Scores persist using the `times-table-score` key in `localStorage` until **Reset score** resets them; the theme preference persists using `times-table-theme`. Unavailable storage does not interrupt practice.
@@ -34,10 +33,9 @@ These describe how the app works today, not permanent requirements. Preserve the
 - Voice input fills the answer without submitting it or selecting the recognized number. The cursor stays at the end.
 - Voice capture is canceled on manual edits or question changes, and stale recognition events are ignored. The number pad remains usable when voice input fails.
 - The theme initially follows the device and remembers an explicit light/dark choice when storage is available. Unavailable storage does not interrupt practice.
-- The name is “Times Tables,” with a blue theme and a white multiplication sign on a blue square.
+- The browser title and visible centered header title are “Times Tables,” with a blue theme and white multiplication-sign browser and home-screen icons.
 - The layout is compact and responsive for phones and iPads, with accessible labels, visible keyboard focus, and comfortable touch targets.
-- **Reset score** sits to the right of the score and asks for confirmation before resetting. Canceling leaves the score and current question unchanged. There is no practice badge or footer.
-- A hidden score editor opens after five taps or clicks on the score within two seconds. It accepts nonnegative whole numbers in `correct / total` format, with correct no greater than total. Canceling or entering invalid values leaves the score unchanged.
+- The score and icon-only **Reset score** sit together on the left side of the compact header, with the title centered and theme switch on the right. Resetting asks for confirmation; canceling leaves the score and current question unchanged. There is no separate score row, practice badge, or footer.
 - The microphone button sits to the right of the answer input at the same height. “Your answer” is centered over the input alone.
 - The light/dark control is a horizontal switch, with reduced-motion support.
 
