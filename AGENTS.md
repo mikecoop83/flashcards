@@ -10,6 +10,7 @@
 ## Code map and state
 
 - `newQuestion()` selects and displays a question; `finish()` completes the equation and shows the next-question control.
+- `celebrateCorrectAnswer()` shows a success banner, green card/equation/answer highlights, and brief CSS confetti after a correct submission. `newQuestion()` clears the celebration.
 - `editAnswer()` handles keypad, physical-keyboard, and paste edits. The form's submit handler validates answers and updates scoring; `updateScore()` renders the totals and percentage.
 - `editScore()` validates and saves a manual score without changing the current question or retry state. Five taps or clicks on the score within two seconds open its prompt.
 - `parseSpokenNumber()` converts recognized English numbers to digits. Speech callbacks check the active recognition session to ignore stale events; `stopListening()` cancels it.
@@ -25,7 +26,10 @@ These describe how the app works today, not permanent requirements. Preserve the
 - Each question counts once, on its first valid submission. Only first-try correct answers increase the correct count. Invalid input, retries, and answer reveals do not add to the total.
 - The percentage appears only when the total is greater than zero.
 - The equation keeps its question mark after an incorrect attempt and shows the answer after a correct attempt or reveal.
-- The mobile keyboard stays closed. An on-screen number pad provides digits, clear, and backspace; physical keyboard and digits-only paste are also supported.
+- Correct submissions, including retries, show a checkmark banner and a short confetti celebration; reveals do not. The banner uses reserved space so the controls stay in place. Reduced-motion settings disable the animations and confetti while preserving the static success styling.
+- Incorrect answers show static red highlights on the card, equation, and answer field. These follow the feedback tone and clear when the answer is correct, revealed, or a new question starts.
+- Feedback and voice status sit between the equation and **Your answer**, with space reserved for two lines of feedback.
+- The answer field is focused on page load, while the mobile keyboard stays closed. An on-screen number pad provides digits, clear, and backspace; physical keyboard and digits-only paste are also supported.
 - The number pad and microphone remain visible but disabled after a correct answer or reveal, and are enabled again for a new question.
 - Voice input fills the answer without submitting it or selecting the recognized number. The cursor stays at the end.
 - Voice capture is canceled on manual edits or question changes, and stale recognition events are ignored. The number pad remains usable when voice input fails.

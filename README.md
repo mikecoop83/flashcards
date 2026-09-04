@@ -9,8 +9,11 @@ Download or clone this repository and open `index.html` in a browser. No install
 ## Features
 
 - Randomized questions covering all 169 factor pairs from 0–12 before repeating.
-- Compact on-screen number pad with clear and backspace, without opening the mobile keyboard. Physical keyboard input and digit-only paste are also supported when the answer field is focused.
+- Compact on-screen number pad with clear and backspace, without opening the mobile keyboard. The answer field is focused on page load, ready for physical keyboard input or digit-only paste.
 - The number pad and microphone stay visible but disabled after a correct answer or reveal, keeping the controls in place until the next question.
+- Correct answers earn a bold checkmark banner, green highlights, and a brief confetti celebration, including after retries. The controls stay in place, and reduced-motion settings keep the celebration still.
+- Incorrect answers show red highlights on the card, equation, and answer field, with no animation.
+- Feedback and voice status appear directly between the equation and **Your answer**.
 - Correct answers out of total questions, plus a percentage once you’ve answered a question.
 - Unlimited retries or the option to reveal the answer after a mistake.
 - Blue light and dark themes with a horizontal switch. Initially follows your device’s theme and remembers your selection when browser storage is available.

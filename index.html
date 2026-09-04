@@ -25,8 +25,8 @@
     });
   </script>
   <style>
-    :root { color-scheme: light; --bg: #eff6ff; --text: #19365b; --muted: #526b8a; --surface: #ffffff; --border: #c2d5ed; --soft: #dbeafe; --input: #ffffff; --accent: #1d4ed8; --hover: #1e40af; --on-accent: #ffffff; --focus: #3b82f6; --placeholder: #7185a1; --wrong: #a34414; --right: #167044; font-family: ui-rounded, 'Avenir Next', system-ui, sans-serif; color: var(--text); background: var(--bg); }
-    :root[data-theme="dark"] { color-scheme: dark; --bg: #0b162b; --text: #e0edff; --muted: #a6bddb; --surface: #14243d; --border: #3b5577; --soft: #203b61; --input: #0e1d33; --accent: #8bbcff; --hover: #b0d2ff; --on-accent: #102342; --focus: #93c5fd; --placeholder: #8a9fbb; --wrong: #ffba8a; --right: #7bdfad; }
+    :root { color-scheme: light; --bg: #eff6ff; --text: #19365b; --muted: #526b8a; --surface: #ffffff; --border: #c2d5ed; --soft: #dbeafe; --input: #ffffff; --accent: #1d4ed8; --hover: #1e40af; --on-accent: #ffffff; --focus: #3b82f6; --placeholder: #7185a1; --wrong: #b91c1c; --error-bg: #fee2e2; --error-ring: #ef444433; --right: #167044; --success-bg: #dcfce7; --success-ring: #22c55e33; font-family: ui-rounded, 'Avenir Next', system-ui, sans-serif; color: var(--text); background: var(--bg); }
+    :root[data-theme="dark"] { color-scheme: dark; --bg: #0b162b; --text: #e0edff; --muted: #a6bddb; --surface: #14243d; --border: #3b5577; --soft: #203b61; --input: #0e1d33; --accent: #8bbcff; --hover: #b0d2ff; --on-accent: #102342; --focus: #93c5fd; --placeholder: #8a9fbb; --wrong: #fca5a5; --error-bg: #451a1a; --error-ring: #f8717133; --right: #7bdfad; --success-bg: #153d30; --success-ring: #7bdfad33; }
     * { box-sizing: border-box; }
     body { margin: 0; min-height: 100svh; padding: clamp(20px, 5vw, 56px); padding-top: 16px; }
     main { max-width: 680px; margin: auto; }
@@ -37,8 +37,24 @@
     .scoreboard { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; }
     .score { font-size: 16px; user-select: none; touch-action: manipulation; }
     .score strong { font-size: 24px; font-variant-numeric: tabular-nums; }
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 28px; padding: clamp(22px, 5vw, 42px); box-shadow: 0 12px 40px #1023420a; text-align: center; }
-    .question { font-size: clamp(54px, 12vw, 86px); font-weight: 750; letter-spacing: -3px; margin: 22px 0 28px; font-variant-numeric: tabular-nums; }
+    .card { position: relative; background: var(--surface); border: 1px solid var(--border); border-radius: 28px; padding: clamp(22px, 5vw, 42px); box-shadow: 0 12px 40px #1023420a; text-align: center; }
+    .card[data-result="correct"] { border-color: var(--right); box-shadow: 0 0 0 4px var(--success-ring), 0 12px 40px #1023420a; }
+    .card[data-result="correct"] .question { color: var(--right); }
+    .card[data-result="correct"] #answer { background: var(--success-bg); border-color: var(--right); color: var(--right); }
+    .card[data-tone="wrong"] { border-color: var(--wrong); box-shadow: 0 0 0 4px var(--error-ring), 0 12px 40px #1023420a; }
+    .card[data-tone="wrong"] .question { color: var(--wrong); }
+    .card[data-tone="wrong"] #answer { background: var(--error-bg); border-color: var(--wrong); color: var(--wrong); }
+    .question-status { height: 36px; display: grid; place-items: center; }
+    .success-banner { display: flex; align-items: center; gap: 8px; padding: 4px 14px; border-radius: 999px; background: var(--success-bg); color: var(--right); font-size: 20px; font-weight: 750; line-height: 28px; animation: success-pop 280ms ease-out; }
+    .confetti { position: absolute; inset: 0 0 auto; height: 260px; overflow: hidden; border-radius: 28px 28px 0 0; pointer-events: none; }
+    .confetti i { --drift: 28px; --spin: 300deg; position: absolute; top: -16px; left: calc(4% + var(--i) * 8%); width: 8px; height: 14px; border-radius: 2px; background: #38bdf8; opacity: 0; animation: confetti-fall 1000ms ease-out both; animation-delay: calc(var(--i) * 25ms); }
+    .confetti i:nth-child(even) { --drift: -28px; --spin: -240deg; height: 8px; }
+    .confetti i:nth-child(4n + 2) { background: #fbbf24; }
+    .confetti i:nth-child(4n + 3) { background: #fb7185; }
+    .confetti i:nth-child(4n) { background: #a78bfa; }
+    @keyframes success-pop { from { transform: scale(.85); opacity: .4; } to { transform: scale(1); opacity: 1; } }
+    @keyframes confetti-fall { 0% { transform: translate(0, 0) rotate(0); opacity: 0; } 15% { opacity: 1; } 100% { transform: translate(var(--drift), 270px) rotate(var(--spin)); opacity: 0; } }
+    .question { font-size: clamp(54px, 12vw, 86px); font-weight: 750; letter-spacing: -3px; margin: 22px 0 0; font-variant-numeric: tabular-nums; }
     .question span { color: var(--muted); font-weight: 400; }
     label { display: block; font-size: 14px; font-weight: 650; margin-bottom: 10px; }
     input { width: 100%; min-height: 78px; border: 2px solid var(--border); border-radius: 16px; background: var(--input); color: var(--text); font: 650 36px ui-rounded, system-ui, sans-serif; text-align: center; }
@@ -59,7 +75,7 @@
     .primary { background: var(--accent); color: var(--on-accent); width: 100%; margin-top: 16px; }
     .primary:hover { background: var(--hover); }
     .secondary { background: var(--soft); color: var(--text); width: 100%; margin-top: 10px; }
-    .feedback { min-height: 48px; display: grid; align-content: center; margin: 14px 0 0; font-size: 15px; line-height: 1.5; color: var(--muted); }
+    .feedback { min-height: 48px; display: grid; align-content: center; margin: 8px 0 12px; font-size: 15px; line-height: 1.5; color: var(--muted); }
     .feedback[data-tone="wrong"] { color: var(--wrong); }
     .feedback[data-tone="right"] { color: var(--right); }
     .reset { margin-left: auto; flex-shrink: 0; background: transparent; color: var(--muted); font-size: 13px; padding: 10px; white-space: nowrap; }
@@ -68,9 +84,9 @@
     .switch-track::after { content: ''; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); transition: transform 160ms ease; }
     .theme-toggle[aria-checked="true"] .switch-track::after { transform: translateX(22px); }
     .theme-icon { font-size: 20px; line-height: 1; }
-    @media (prefers-reduced-motion: reduce) { .switch-track::after { transition: none; } }
+    @media (prefers-reduced-motion: reduce) { .switch-track::after { transition: none; } .success-banner { animation: none; } .confetti { display: none; } }
     [hidden] { display: none !important; }
-    @media (max-width: 600px), (max-height: 800px) { body { padding: 8px 16px 16px; } .card { padding: 18px; } .question { font-size: 52px; margin: 10px 0 14px; } input { min-height: 56px; font-size: 30px; } .feedback { margin-top: 8px; min-height: 42px; } }
+    @media (max-width: 600px), (max-height: 800px) { body { padding: 8px 16px 16px; } .card { padding: 18px; } .question { font-size: 52px; margin: 10px 0 0; } input { min-height: 56px; font-size: 30px; } .feedback { margin: 6px 0 10px; } }
     @media (max-width: 380px) { .card { padding: 22px 18px; } }
   </style>
 </head>
@@ -84,9 +100,18 @@
       <div class="score" id="score" role="status" aria-live="polite"><strong id="correct">0</strong> / <strong id="total">0</strong> correct <span id="percentage" hidden></span></div>
       <button class="reset" id="reset" type="button">Reset score ↻</button>
     </div>
-    <section class="card" aria-label="Multiplication practice">
-      <div class="eyebrow" id="question-number">Question 1</div>
+    <section class="card" id="practice-card" aria-label="Multiplication practice">
+      <div class="confetti" id="confetti" aria-hidden="true" hidden>
+        <i style="--i: 0"></i><i style="--i: 1"></i><i style="--i: 2"></i><i style="--i: 3"></i>
+        <i style="--i: 4"></i><i style="--i: 5"></i><i style="--i: 6"></i><i style="--i: 7"></i>
+        <i style="--i: 8"></i><i style="--i: 9"></i><i style="--i: 10"></i><i style="--i: 11"></i>
+      </div>
+      <div class="question-status">
+        <div class="eyebrow" id="question-number">Question 1</div>
+        <div class="success-banner" id="success-banner" hidden><span aria-hidden="true">✓</span><span id="success-title"></span></div>
+      </div>
       <div class="question" id="question" aria-live="polite"></div>
+      <p class="feedback" id="feedback" role="status" aria-live="polite">One question at a time. No timer, no rush.</p>
       <form id="answer-form" novalidate>
         <div class="answer-row">
           <label for="answer">Your answer</label>
@@ -111,7 +136,6 @@
         <button class="secondary" id="reveal" type="button" hidden>Show the answer</button>
         <button class="primary" id="next" type="button" hidden>Next question →</button>
       </form>
-      <p class="feedback" id="feedback" role="status" aria-live="polite">One question at a time. No timer, no rush.</p>
     </section>
   </main>
   <script>
@@ -248,6 +272,7 @@
     function feedback(message, tone = '') {
       $('feedback').textContent = message;
       $('feedback').dataset.tone = tone;
+      $('practice-card').dataset.tone = tone;
     }
 
     function updateScore() {
@@ -296,6 +321,10 @@
 
     function newQuestion(focus = true) {
       stopListening();
+      $('practice-card').dataset.result = '';
+      $('question-number').hidden = false;
+      $('success-banner').hidden = true;
+      $('confetti').hidden = true;
       $('speak').disabled = false;
       if (!deck.length) refillDeck();
       pair = deck.pop();
@@ -328,6 +357,14 @@
       $('reveal').hidden = true;
       $('next').hidden = false;
       $('next').focus();
+    }
+
+    function celebrateCorrectAnswer(firstTry) {
+      $('practice-card').dataset.result = 'correct';
+      $('question-number').hidden = true;
+      $('success-title').textContent = firstTry ? 'That’s right!' : 'You got it!';
+      $('success-banner').hidden = false;
+      $('confetti').hidden = false;
     }
 
     function editAnswer(key) {
@@ -397,6 +434,7 @@
       if (isCorrect) {
         feedback(firstTry ? 'That’s right! Nicely done.' : 'You got it! Practice pays off.', 'right');
         finish();
+        celebrateCorrectAnswer(firstTry);
       } else {
         feedback('Not quite. Try again, or take a look at the answer.', 'wrong');
         $('answer').setAttribute('aria-invalid', 'true');
@@ -425,7 +463,7 @@
       newQuestion();
     });
     updateScore();
-    newQuestion(false);
+    newQuestion();
   </script>
 </body>
 </html>
