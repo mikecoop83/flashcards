@@ -31,12 +31,11 @@
     body { margin: 0; min-height: 100svh; padding: clamp(20px, 5vw, 56px); padding-top: 16px; }
     main { max-width: 680px; margin: auto; }
     header { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 12px; }
-    .mark { display: grid; place-items: center; flex-shrink: 0; width: 42px; height: 42px; background: #2563eb; color: #ffffff; border-radius: 12px; font-size: 32px; font-weight: 750; line-height: 1; }
-    .brand { display: flex; align-items: center; justify-content: center; gap: 12px; grid-column: 2; grid-row: 1; font-size: 18px; font-weight: 750; letter-spacing: -.5px; white-space: nowrap; }
     .eyebrow { font-size: 12px; font-weight: 750; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
-    .scoreboard { display: flex; align-items: center; justify-self: start; min-width: 0; }
-    .score { min-width: 0; overflow-wrap: anywhere; font-size: 16px; }
+    .scoreboard { display: flex; align-items: center; justify-self: start; min-width: 0; white-space: nowrap; }
+    .score { min-width: 0; overflow-wrap: normal; font-size: 16px; white-space: nowrap; }
     .score strong { font-size: 24px; font-variant-numeric: tabular-nums; }
+    #percentage { display: inline-block; vertical-align: middle; line-height: 1; }
     .card { position: relative; background: var(--surface); border: 1px solid var(--border); border-radius: 28px; padding: clamp(22px, 5vw, 42px); box-shadow: 0 12px 40px #1023420a; text-align: center; }
     .card[data-result="correct"] { border-color: var(--right); box-shadow: 0 0 0 4px var(--success-ring), 0 12px 40px #1023420a; }
     .card[data-result="correct"] .question { color: var(--right); }
@@ -79,14 +78,15 @@
     .feedback[data-tone="wrong"] { color: var(--wrong); }
     .feedback[data-tone="right"] { color: var(--right); }
     .reset { flex-shrink: 0; width: 42px; min-height: 42px; background: transparent; color: var(--muted); font-size: 22px; padding: 8px; white-space: nowrap; }
-    .theme-toggle { grid-column: 3; grid-row: 1; justify-self: end; display: flex; align-items: center; gap: 8px; padding: 10px 4px; background: transparent; color: var(--text); }
-    .switch-track { position: relative; display: block; width: 52px; height: 30px; border: 1px solid var(--border); border-radius: 999px; background: var(--soft); }
-    .switch-track::after { content: ''; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); transition: transform 160ms ease; }
-    .theme-toggle[aria-checked="true"] .switch-track::after { transform: translateX(22px); }
-    .theme-icon { font-size: 20px; line-height: 1; }
+    .theme-toggle { grid-column: 3; grid-row: 1; justify-self: end; display: flex; align-items: center; gap: 5px; padding: 10px 4px; background: transparent; color: var(--text); }
+    .switch-track { position: relative; display: block; width: 42px; height: 24px; border: 1px solid var(--border); border-radius: 999px; background: var(--soft); }
+    .switch-track::after { content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); transition: transform 160ms ease; }
+    .theme-toggle[aria-checked="true"] .switch-track::after { transform: translateX(18px); }
+    .theme-icon { font-size: 16px; line-height: 1; }
     @media (prefers-reduced-motion: reduce) { .switch-track::after { transition: none; } .success-banner { animation: none; } .confetti { display: none; } }
     [hidden] { display: none !important; }
-    @media (max-width: 600px), (max-height: 800px) { body { padding: 8px 16px 16px; } .card { padding: 18px; } .question { font-size: 52px; margin: 10px 0 0; } input { min-height: 56px; font-size: 30px; } .feedback { margin: 6px 0 10px; } }
+    @media (max-width: 600px), (max-height: 800px) { body { padding: max(8px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom)); } .card { padding: 18px; } .question { font-size: 52px; margin: 10px 0 0; } input { min-height: 56px; font-size: 30px; } .feedback { margin: 6px 0 10px; } }
+    @media (max-width: 390px) { header { grid-template-columns: minmax(0, 1fr) auto; } .scoreboard { grid-column: 1; grid-row: 1; } .theme-toggle { grid-column: 2; grid-row: 1; } }
     @media (max-width: 380px) { .card { padding: 22px 18px; } }
   </style>
 </head>
@@ -94,10 +94,9 @@
   <main>
     <header>
       <div class="scoreboard">
-        <div class="score" role="status" aria-live="polite"><strong id="correct">0</strong> / <strong id="total">0</strong> correct <span id="percentage" hidden></span></div>
+        <div class="score" role="status" aria-live="polite"><strong id="correct">0</strong> / <strong id="total">0</strong> <span id="percentage" hidden></span></div>
         <button class="reset" id="reset" type="button" aria-label="Reset score" title="Reset score">↻</button>
       </div>
-      <div class="brand"><div class="mark" aria-hidden="true">×</div>Times Tables</div>
       <button class="theme-toggle" id="theme-toggle" type="button" role="switch" aria-label="Dark mode" aria-checked="false"><span class="theme-icon" aria-hidden="true">☀</span><span class="switch-track" aria-hidden="true"></span><span class="theme-icon" aria-hidden="true">☾</span></button>
     </header>
     <section class="card" id="practice-card" aria-label="Multiplication practice">

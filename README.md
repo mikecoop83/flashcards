@@ -17,7 +17,7 @@ Download or clone this repository and open `index.html` in a browser. No install
 - Correct answers out of total questions, plus a percentage once you’ve answered a question.
 - Unlimited retries or the option to reveal the answer after a mistake.
 - Blue light and dark themes with a horizontal switch. Initially follows your device’s theme and remembers your selection when browser storage is available.
-- A compact header with the score and icon-only **Reset score** control on the left, the title centered, and the theme switch on the right. Resetting asks for confirmation before clearing your score and shuffling the questions.
+- A compact header with the score and icon-only **Reset score** control on the left and a compact theme switch on the right. The score stays on one line, including its percentage once available. Resetting asks for confirmation before clearing your score and shuffling the questions.
 
 ## Voice input
 
