@@ -33,9 +33,11 @@
     header { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 12px; }
     .eyebrow { font-size: 12px; font-weight: 750; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
     .scoreboard { display: flex; align-items: center; justify-self: start; min-width: 0; white-space: nowrap; }
-    .score { min-width: 0; overflow-wrap: normal; font-size: 16px; white-space: nowrap; }
+    .score { display: flex; align-items: center; gap: .25em; min-width: 0; overflow-wrap: normal; font-size: 16px; white-space: nowrap; }
+    .score-numbers { display: flex; align-items: baseline; gap: .25em; }
     .score strong { font-size: 24px; font-variant-numeric: tabular-nums; }
-    #percentage { display: inline-block; vertical-align: middle; line-height: 1; }
+    #percentage { line-height: 1; }
+    .user-name { grid-column: 2; grid-row: 1; justify-self: center; max-width: 180px; min-height: 42px; overflow: hidden; padding: 8px 12px; background: transparent; color: var(--muted); font-size: 16px; text-overflow: ellipsis; white-space: nowrap; }
     .card { position: relative; background: var(--surface); border: 1px solid var(--border); border-radius: 28px; padding: clamp(22px, 5vw, 42px); box-shadow: 0 12px 40px #1023420a; text-align: center; }
     .card[data-result="correct"] { border-color: var(--right); box-shadow: 0 0 0 4px var(--success-ring), 0 12px 40px #1023420a; }
     .card[data-result="correct"] .question { color: var(--right); }
@@ -83,20 +85,40 @@
     .switch-track::after { content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); transition: transform 160ms ease; }
     .theme-toggle[aria-checked="true"] .switch-track::after { transform: translateX(18px); }
     .theme-icon { font-size: 16px; line-height: 1; }
+    .name-modal { position: fixed; z-index: 10; inset: 0; display: grid; place-items: center; padding: 24px; background: #10234266; backdrop-filter: blur(4px); }
+    .name-dialog { width: min(100%, 360px); padding: 28px; border: 1px solid var(--border); border-radius: 24px; background: var(--surface); box-shadow: 0 20px 60px #10234233; text-align: center; }
+    .name-dialog h2 { margin: 0; font-size: 24px; }
+    .name-dialog p { margin: 8px 0 20px; color: var(--muted); line-height: 1.5; }
+    .name-dialog label { text-align: left; }
+    .name-dialog input { min-height: 56px; font-size: 24px; }
+    .name-dialog button { width: 100%; margin-top: 16px; background: var(--accent); color: var(--on-accent); }
     @media (prefers-reduced-motion: reduce) { .switch-track::after { transition: none; } .success-banner { animation: none; } .confetti { display: none; } }
     [hidden] { display: none !important; }
     @media (max-width: 600px), (max-height: 800px) { body { padding: max(8px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom)); } .card { padding: 18px; } .question { font-size: 52px; margin: 10px 0 0; } input { min-height: 56px; font-size: 30px; } .feedback { margin: 6px 0 10px; } }
-    @media (max-width: 390px) { header { grid-template-columns: minmax(0, 1fr) auto; } .scoreboard { grid-column: 1; grid-row: 1; } .theme-toggle { grid-column: 2; grid-row: 1; } }
+    @media (max-width: 600px) { .user-name { display: none; } }
+    @media (max-width: 390px) { body { padding-inline: 12px; } header { grid-template-columns: minmax(0, 1fr) auto; gap: 8px; } .scoreboard { grid-column: 1; grid-row: 1; } .theme-toggle { grid-column: 2; grid-row: 1; } .name-modal { padding: 16px; } .name-dialog { padding: 22px; } }
     @media (max-width: 380px) { .card { padding: 22px 18px; } }
   </style>
 </head>
 <body>
+  <div class="name-modal" id="name-modal" hidden>
+    <div class="name-dialog" role="dialog" aria-modal="true" aria-labelledby="name-title">
+      <h2 id="name-title">What is your name?</h2>
+      <p>I’ll cheer you on while you practice.</p>
+      <form id="name-form">
+        <label for="name-input">Your name</label>
+        <input id="name-input" type="text" autocomplete="name" maxlength="40" required>
+        <button type="submit">Continue</button>
+      </form>
+    </div>
+  </div>
   <main>
     <header>
       <div class="scoreboard">
-        <div class="score" role="status" aria-live="polite"><strong id="correct">0</strong> / <strong id="total">0</strong> <span id="percentage" hidden></span></div>
+        <div class="score" role="status" aria-live="polite"><span class="score-numbers"><strong id="correct">0</strong><span aria-hidden="true">/</span><strong id="total">0</strong></span><span id="percentage" hidden></span></div>
         <button class="reset" id="reset" type="button" aria-label="Reset score" title="Reset score">↻</button>
       </div>
+      <button class="user-name" id="user-name" type="button" hidden></button>
       <button class="theme-toggle" id="theme-toggle" type="button" role="switch" aria-label="Dark mode" aria-checked="false"><span class="theme-icon" aria-hidden="true">☀</span><span class="switch-track" aria-hidden="true"></span><span class="theme-icon" aria-hidden="true">☾</span></button>
     </header>
     <section class="card" id="practice-card" aria-label="Multiplication practice">
@@ -161,11 +183,6 @@
       }
       if (savedScore && typeof savedScore.name === 'string') userName = savedScore.name.trim();
     } catch {}
-    if (!userName) {
-      const enteredName = window.prompt('What is your name?');
-      userName = enteredName ? enteredName.trim().slice(0, 40) : '';
-      if (userName) saveScore();
-    }
     let questionNumber = 0;
     let attempted = false;
     let finished = false;
@@ -290,6 +307,11 @@
 
     function saveScore() {
       try { localStorage.setItem(scoreStorageKey, JSON.stringify({ correct, total, name: userName })); } catch {}
+    }
+
+    function updateUserName() {
+      $('user-name').textContent = userName;
+      $('user-name').hidden = !userName;
     }
 
     const firstTryPraise = [
@@ -458,8 +480,29 @@
       saveScore();
       newQuestion();
     });
+    $('name-form').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const enteredName = $('name-input').value.trim().slice(0, 40);
+      if (!enteredName) return;
+      userName = enteredName;
+      saveScore();
+      updateUserName();
+      $('name-modal').hidden = true;
+      $('answer').focus();
+    });
+    $('user-name').addEventListener('click', () => {
+      $('name-input').value = userName;
+      $('name-modal').hidden = false;
+      $('name-input').focus();
+      $('name-input').select();
+    });
+    updateUserName();
     updateScore();
     newQuestion();
+    if (!userName) {
+      $('name-modal').hidden = false;
+      $('name-input').focus();
+    }
   </script>
 </body>
 </html>

@@ -18,7 +18,7 @@ Download or clone this repository and open `index.html` in a browser. No install
 - Unlimited retries or the option to reveal the answer after a mistake.
 - Blue light and dark themes with a horizontal switch. Initially follows your device’s theme and remembers your selection when browser storage is available.
 - A compact header with the score and icon-only **Reset score** control on the left and a compact theme switch on the right. The score stays on one line, including its percentage once available. Resetting asks for confirmation before clearing your score and shuffling the questions.
-- On the first visit, the app asks for your name and saves it with your score in browser storage. Correct answers receive personalized praise, and incorrect answers receive personalized encouragement.
+- On the first visit, a themed popup asks for your name and saves it with your score in browser storage. The saved name appears in the header when there is room and can be clicked to change it. Correct answers receive personalized praise, and incorrect answers receive personalized encouragement.
 
 ## Voice input
 
