@@ -110,7 +110,7 @@
         <div class="success-banner" id="success-banner" hidden><span aria-hidden="true">✓</span><span id="success-title"></span></div>
       </div>
       <div class="question" id="question" aria-live="polite"></div>
-      <p class="feedback" id="feedback" role="status" aria-live="polite">One question at a time. No timer, no rush.</p>
+      <p class="feedback" id="feedback" role="status" aria-live="polite"></p>
       <form id="answer-form" novalidate>
         <div class="answer-row">
           <label for="answer">Your answer</label>
@@ -151,6 +151,7 @@
     let pair;
     let correct = 0;
     let total = 0;
+    let userName = '';
     try {
       const savedScore = JSON.parse(localStorage.getItem(scoreStorageKey));
       if (savedScore && Number.isSafeInteger(savedScore.correct) && Number.isSafeInteger(savedScore.total)
@@ -158,7 +159,13 @@
         correct = savedScore.correct;
         total = savedScore.total;
       }
+      if (savedScore && typeof savedScore.name === 'string') userName = savedScore.name.trim();
     } catch {}
+    if (!userName) {
+      const enteredName = window.prompt('What is your name?');
+      userName = enteredName ? enteredName.trim().slice(0, 40) : '';
+      if (userName) saveScore();
+    }
     let questionNumber = 0;
     let attempted = false;
     let finished = false;
@@ -282,7 +289,30 @@
     }
 
     function saveScore() {
-      try { localStorage.setItem(scoreStorageKey, JSON.stringify({ correct, total })); } catch {}
+      try { localStorage.setItem(scoreStorageKey, JSON.stringify({ correct, total, name: userName })); } catch {}
+    }
+
+    const firstTryPraise = [
+      '{name}, that’s right! Nicely done.',
+      'Excellent work, {name}!',
+      'You nailed it, {name}!',
+      'Fantastic job, {name}!'
+    ];
+    const retryPraise = [
+      'You got it, {name}! Practice pays off.',
+      'Well done, {name}— you kept going and solved it.',
+      'Great recovery, {name}!',
+      'You figured it out, {name}!'
+    ];
+    const encouragement = [
+      'Not this time, {name}, but you’re making progress. Try again, or take a look at the answer.',
+      'Good try, {name}! Give it another go, or take a look at the answer.',
+      'Keep going, {name}— you’re learning. Try again, or take a look at the answer.',
+      'Almost, {name}! Check your thinking and try once more.'
+    ];
+    function personalized(phrases) {
+      const phrase = phrases[Math.floor(Math.random() * phrases.length)];
+      return userName ? phrase.replace(/\{name\}/g, userName) : phrase.replace(/^\{name\},?\s*|,?\s*\{name\}/g, '');
     }
 
     function newQuestion(focus = true) {
@@ -307,7 +337,7 @@
       $('check').textContent = 'Check answer';
       $('reveal').hidden = true;
       $('next').hidden = true;
-      feedback('One question at a time. No timer, no rush.');
+      feedback('');
       if (focus) $('answer').focus();
     }
 
@@ -398,11 +428,11 @@
         saveScore();
       }
       if (isCorrect) {
-        feedback(firstTry ? 'That’s right! Nicely done.' : 'You got it! Practice pays off.', 'right');
+        feedback(personalized(firstTry ? firstTryPraise : retryPraise), 'right');
         finish();
         celebrateCorrectAnswer(firstTry);
       } else {
-        feedback('Not quite. Try again, or take a look at the answer.', 'wrong');
+        feedback(personalized(encouragement), 'wrong');
         $('answer').setAttribute('aria-invalid', 'true');
         $('check').textContent = 'Try again';
         $('reveal').hidden = false;

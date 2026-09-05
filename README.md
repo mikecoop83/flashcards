@@ -18,6 +18,7 @@ Download or clone this repository and open `index.html` in a browser. No install
 - Unlimited retries or the option to reveal the answer after a mistake.
 - Blue light and dark themes with a horizontal switch. Initially follows your device’s theme and remembers your selection when browser storage is available.
 - A compact header with the score and icon-only **Reset score** control on the left and a compact theme switch on the right. The score stays on one line, including its percentage once available. Resetting asks for confirmation before clearing your score and shuffling the questions.
+- On the first visit, the app asks for your name and saves it with your score in browser storage. Correct answers receive personalized praise, and incorrect answers receive personalized encouragement.
 
 ## Voice input
 
@@ -29,7 +30,7 @@ Voice input uses the browser’s speech recognition service and may send audio t
 
 Each question counts once, on the first valid answer. Only answers correct on the first try increase the correct count. Retrying or revealing an answer does not change that question’s score. Empty or invalid answers do not count.
 
-Your score is saved in this browser and restored when you reload or return. Choose **Reset score** to reset the saved score and shuffle the questions. Each visit starts with a new question. If browser storage is unavailable, you can still practice, but your score will only last until you reload.
+Your score and name are saved in this browser and restored when you reload or return. Choose **Reset score** to reset the saved score and shuffle the questions; your name is retained. Each visit starts with a new question. If browser storage is unavailable, you can still practice, but your score and name will only last until you reload.
 
 ## Editing
 
