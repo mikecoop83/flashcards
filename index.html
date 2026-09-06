@@ -490,13 +490,28 @@
       $('name-modal').hidden = true;
       $('answer').focus();
     });
+    let lastNameTap = 0;
+    let lastNameEdit = 0;
     function editUserName() {
+      const now = Date.now();
+      if (now - lastNameEdit < 300) return;
+      lastNameEdit = now;
       $('name-input').value = userName;
       $('name-modal').hidden = false;
       $('name-input').focus();
       $('name-input').select();
     }
     $('user-name').addEventListener('dblclick', editUserName);
+    $('user-name').addEventListener('pointerup', (event) => {
+      if (event.pointerType === 'mouse') return;
+      const now = Date.now();
+      if (now - lastNameTap < 500) {
+        lastNameTap = 0;
+        editUserName();
+      } else {
+        lastNameTap = now;
+      }
+    });
     $('user-name').addEventListener('click', (event) => {
       if (event.detail === 0) editUserName();
     });
