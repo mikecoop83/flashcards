@@ -118,7 +118,7 @@
         <div class="score" role="status" aria-live="polite"><span class="score-numbers"><strong id="correct">0</strong><span aria-hidden="true">/</span><strong id="total">0</strong></span><span id="percentage" hidden></span></div>
         <button class="reset" id="reset" type="button" aria-label="Reset score" title="Reset score">↻</button>
       </div>
-      <button class="user-name" id="user-name" type="button" hidden></button>
+      <button class="user-name" id="user-name" type="button" title="Double-click or double-tap to change your name" hidden></button>
       <button class="theme-toggle" id="theme-toggle" type="button" role="switch" aria-label="Dark mode" aria-checked="false"><span class="theme-icon" aria-hidden="true">☀</span><span class="switch-track" aria-hidden="true"></span><span class="theme-icon" aria-hidden="true">☾</span></button>
     </header>
     <section class="card" id="practice-card" aria-label="Multiplication practice">
@@ -490,11 +490,15 @@
       $('name-modal').hidden = true;
       $('answer').focus();
     });
-    $('user-name').addEventListener('click', () => {
+    function editUserName() {
       $('name-input').value = userName;
       $('name-modal').hidden = false;
       $('name-input').focus();
       $('name-input').select();
+    }
+    $('user-name').addEventListener('dblclick', editUserName);
+    $('user-name').addEventListener('click', (event) => {
+      if (event.detail === 0) editUserName();
     });
     updateUserName();
     updateScore();
