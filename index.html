@@ -95,8 +95,8 @@
     @media (prefers-reduced-motion: reduce) { .switch-track::after { transition: none; } .success-banner { animation: none; } .confetti { display: none; } }
     [hidden] { display: none !important; }
     @media (max-width: 600px), (max-height: 800px) { body { padding: max(8px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom)); } .card { padding: 18px; } .question { font-size: 52px; margin: 10px 0 0; } input { min-height: 56px; font-size: 30px; } .feedback { margin: 6px 0 10px; } }
-    @media (max-width: 600px) { .user-name { display: none; } }
-    @media (max-width: 390px) { body { padding-inline: 12px; } header { grid-template-columns: minmax(0, 1fr) auto; gap: 8px; } .scoreboard { grid-column: 1; grid-row: 1; } .theme-toggle { grid-column: 2; grid-row: 1; } .name-modal { padding: 16px; } .name-dialog { padding: 22px; } }
+    @media (max-width: 600px) { header { grid-template-columns: auto minmax(0, 1fr) auto; grid-template-rows: auto; column-gap: 8px; } .scoreboard { grid-column: 1; grid-row: 1; } .user-name { grid-column: 2; grid-row: 1; min-width: 0; max-width: 100%; padding-inline: 4px; font-size: 14px; } .theme-toggle { grid-column: 3; grid-row: 1; } }
+    @media (max-width: 390px) { body { padding-inline: 12px; } header { column-gap: 6px; } .name-modal { padding: 16px; } .name-dialog { padding: 22px; } }
     @media (max-width: 380px) { .card { padding: 22px 18px; } }
   </style>
 </head>
